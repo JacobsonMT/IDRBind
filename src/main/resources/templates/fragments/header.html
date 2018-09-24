@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" th:href="@{/}" href="/">
+        <div class="brand">
+            <h1 class="text-uppercase font-weight-bold m-0">IDR Bind</h1>
+            <p  class="text-uppercase">Gsponer Lab</p>
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/}" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/queue}" href="/queue">Queue</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/documentation}" href="/documentation">Documentation</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/faq}" href="/faq">FAQ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/support}" href="/support">Contact</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+</body>
+</html>
