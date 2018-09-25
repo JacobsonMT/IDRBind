@@ -1,0 +1,28 @@
+package com.jacobsonmt.idrbind.settings;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.Email;
+
+@Component
+@ConfigurationProperties(prefix = "idrbind.site")
+@Getter
+@Setter
+public class SiteSettings {
+
+    private String host;
+    private String context;
+
+    @Email
+    private String contactEmail;
+    @Email
+    private String adminEmail;
+
+    public String getFullUrl() {
+        return host + context + (context.endsWith( "/" ) ? "" : "/");
+    }
+
+}

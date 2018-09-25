@@ -3,6 +3,9 @@
       xmlns:th="http://www.thymeleaf.org">
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="https://www.ubc.ca/">
+        <img th:src="@{/img/UBC-logo-signature-blue.gif}" style="height: 40px;" class="pr-2">
+    </a>
     <a class="navbar-brand" th:href="@{/}" href="/">
         <div class="brand">
             <h1 class="text-uppercase font-weight-bold m-0">IDR Bind</h1>
@@ -28,7 +31,7 @@
                 <a class="nav-link" th:href="@{/faq}" href="/faq">FAQ</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/support}" href="/support">Contact</a>
+                <a class="nav-link" th:href="@{/contact}" href="/contact">Contact</a>
             </li>
         </ul>
     </div>

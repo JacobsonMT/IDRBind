@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>IDR Bind - Job Queue</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.comajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}"/>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div th:replace="fragments/header">...</div>
+<div class="container p-4">
+
+    <div th:replace="fragments/title :: title(title='Job Description')" th:remove="tag">...</div>
+
+    <div class="main-content p-4" >
+        <table class="job-table table table-sm mb-0">
+            <tbody>
+            <tr>
+                <td>Job IdD</td>
+                <td><span class="align-middle p-4" th:text="${job.jobId}"></span></td>
+            </tr>
+            <tr>
+                <td>Label</td>
+                <td><span class="align-middle p-4" th:text="${job.label}"></span></td>
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td><span class="align-middle p-4" th:text="${job.status}"></span></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td><span class="align-middle p-4" th:text="${job.email}"></span></td>
+            </tr>
+            <tr>
+                <td>Private</td>
+                <td><span class="align-middle p-4" th:text="${job.hidden}"></span></td>
+            </tr>
+            <tr>
+                <td>Submitted</td>
+                <td><span class="align-middle p-4" th:text="${job.submitted}"></span></td>
+            </tr>
+
+            <tr th:if="${job.complete && !job.failed}">
+                <td>Result PDB</td>
+                <td><a class="align-middle p-4" th:href="${job.jobId}+'/resultPDB'">download</a></td>
+            </tr>
+
+            <tr th:if="${job.complete && !job.failed}">
+                <td>Result CSV</td>
+                <td><a class="align-middle p-4" th:href="${job.jobId}+'/resultCSV'">download</a></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="4">
+
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+
+
+
+</div>
+<div th:replace="fragments/footer" th:remove="tag">...</div>
+</body>
+</html>

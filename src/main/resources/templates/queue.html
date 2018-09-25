@@ -3,13 +3,13 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>IDR Bind</title>
+    <title>IDR Bind - Job Queue</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.comajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css"/>
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}"/>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -19,43 +19,25 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script th:src="@{/js/jquery-ui.min.js}"></script>
+    <script th:src="@{/js/queue.js}"></script>
+
 </head>
 <body>
 <div th:replace="fragments/header">...</div>
 <div class="container p-4">
 
 
-    <div th:replace="fragments/title :: title(title='Submit IDR Bind Job')" th:remove="tag">...</div>
+    <div th:replace="fragments/title :: title(title='Public Jobs Queue')" th:remove="tag">...</div>
 
     <div class="main-content p-4" >
 
-        <p>Welcome to IDR Bind. Please submit a job below.</p>
-
-        <hr/>
-
-        <div th:if="${message}" class="p-4">
-            <h2 th:utext="${message}"/>
+        <div th:replace="fragments/job-table :: job-table(genes=${@jobManager.listPublicJobs()})"
+             th:remove="tag">...
         </div>
 
-        <div class="p-4">
-            <form method="POST" enctype="multipart/form-data" action="/">
-                <table>
-                    <tr><td>PDB file:</td><td><input type="file" name="pdbFile" required/></td></tr>
-                    <tr><td>Peptide sequence:</td><td><input type="file" name="sequence" required/></td></tr>
-                    <tr><td>Label:</td><td><input type="text" name="label" required/></td></tr>
-                    <tr><td>Private:</td><td><input type="checkbox" name="hidden"/></td></tr>
-                    <tr><td>Email (Optional):</td><td><input type="email" name="email" /></td></tr>
-
-                    <tr><td></td><td><input type="submit" value="Submit Job" /></td></tr>
-                </table>
-            </form>
-        </div>
-
-        <hr/>
-
-        <div class="p-4">
-            <p><i>Website developed by <a href="mailto:JacobsonMT+idrbind@gmail.com" target="_blank">Matthew Jacobson</a></i></p>
-        </div>
     </div>
 
 
