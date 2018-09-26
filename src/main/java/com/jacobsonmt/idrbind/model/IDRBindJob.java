@@ -119,7 +119,6 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
 
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fop));
             writer.write(fileContents);
-            writer.newLine();
             writer.flush();
             writer.close();
 
