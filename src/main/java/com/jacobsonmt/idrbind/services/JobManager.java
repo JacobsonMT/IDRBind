@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -65,26 +66,27 @@ public class JobManager {
     public IDRBindJob createJob( String userId,
                                  String label,
                                  String inputPDBContent,
+                                 String inputFASTAContent,
                                  String inputProteinChainIds,
                                  String email,
                                  boolean hidden ) {
         IDRBindJob.IDRBindJobBuilder jobBuilder = IDRBindJob.builder();
 
+        // Generated
+        String jobId = UUID.randomUUID().toString();
+        jobBuilder.jobId( jobId );
+
         // Static Resources
         jobBuilder.command( applicationSettings.getCommand() );
-        jobBuilder.commandWorkingDirectory( applicationSettings.getCommandWorkingDirectory() );
-        jobBuilder.inputPDBFullPath( applicationSettings.getInputPDBPath() );
-        jobBuilder.inputProteinChainFullPath( applicationSettings.getInputChainPath() );
-        jobBuilder.outputScoredPDBFullPath( applicationSettings.getOutputScoredPDBPath() );
-        jobBuilder.outputCSVFullPath( applicationSettings.getOutputCSVPath() );
-
-        // Generated
-        jobBuilder.jobId( UUID.randomUUID().toString() );
+        jobBuilder.jobsDirectory( Paths.get( applicationSettings.getJobsDirectory(), jobId) );
+        jobBuilder.outputScoredPDBFilename( applicationSettings.getOutputScoredPDBFilename() );
+        jobBuilder.outputCSVFilename( applicationSettings.getOutputCSVFilename() );
 
         // User Inputs
         jobBuilder.userId( userId );
         jobBuilder.label( label );
         jobBuilder.inputPDBContent( inputPDBContent );
+        jobBuilder.inputFASTAContent( inputFASTAContent );
         jobBuilder.inputProteinChainIds( inputProteinChainIds );
         jobBuilder.hidden( hidden );
         jobBuilder.email( email );

@@ -9,6 +9,8 @@ import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.concurrent.*;
 
@@ -22,18 +24,16 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
 
     // Path to resources
     private String command;
-    private String commandWorkingDirectory;
-    private String inputPDBFullPath;
-    private String inputProteinChainFullPath;
-    private String outputScoredPDBFullPath;
-    private String outputCSVFullPath;
-
+    private Path jobsDirectory;
+    private String outputScoredPDBFilename;
+    private String outputCSVFilename;
 
     // Information on creation of job
     private String userId;
     private String jobId;
     private String label;
     private String inputPDBContent;
+    private String inputFASTAContent;
     private String inputProteinChainIds;
     @Builder.Default private boolean hidden = true;
     private Date submittedDate;
@@ -70,23 +70,31 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
 
             jobManager.onJobStart( this );
 
-            // Write content to input
-            File pdbFile = new File( inputPDBFullPath );
-            writeToFile( pdbFile, inputPDBContent );
+            // Create job directory
+            Files.createDirectories( jobsDirectory );
 
-            File chainFile = new File( inputProteinChainFullPath );
-            writeToFile( chainFile, inputProteinChainIds );
+            // Write content to input
+            Path pdbFile = jobsDirectory.resolve( "input.pdb" );
+            try ( BufferedWriter writer = Files.newBufferedWriter( pdbFile, Charset.forName( "UTF-8" ) ) ) {
+                writer.write( inputPDBContent );
+            }
+
+            Path fastaFile = jobsDirectory.resolve( "input.fasta" );
+            try ( BufferedWriter writer = Files.newBufferedWriter( fastaFile, Charset.forName( "UTF-8" ) ) ) {
+                writer.write( inputFASTAContent );
+            }
 
             // Execute script
             StopWatch sw = new StopWatch();
             sw.start();
-            executeCommand( "./" + command, commandWorkingDirectory );
+            String[] commands = {command, "input.pdb", inputProteinChainIds, "input.fasta"};
+            executeCommand( commands, jobsDirectory );
             sw.stop();
             this.executionTime = sw.getTotalTimeMillis() / 1000;
 
             // Get output
-            String resultPDB = inputStreamToString( new FileInputStream( outputScoredPDBFullPath ) );
-            String resultCSV = inputStreamToString( new FileInputStream( outputCSVFullPath ) );
+            String resultPDB = inputStreamToString( Files.newInputStream( jobsDirectory.resolve( outputScoredPDBFilename ) ) );
+            String resultCSV = inputStreamToString( Files.newInputStream( jobsDirectory.resolve( outputCSVFilename ) ) );
 
             log.info( "Finished job (" + label + ") for user: (" + userId + ")" );
             this.running = false;
@@ -108,31 +116,13 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
 
     }
 
-    private static void writeToFile(File file, String fileContents) throws IOException {
-
-        try (FileOutputStream fop = new FileOutputStream( file )) {
-
-            // if file doesn't exists, then create it
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fop));
-            writer.write(fileContents);
-            writer.flush();
-            writer.close();
-
-        }
-
-    }
-
-    private static String executeCommand( String command, String path ) {
+    private static String executeCommand( String[] command, Path path ) {
 
         StringBuffer output = new StringBuffer();
 
         Process p;
         try {
-            p = Runtime.getRuntime().exec( command, null, new File( path ) );
+            p = Runtime.getRuntime().exec( command, null, path.toFile() );
             p.waitFor();
             BufferedReader reader = new BufferedReader( new InputStreamReader( p.getInputStream() ) );
 

@@ -1,11 +1,10 @@
-sleep 3
+pdbfile="$1"
+chain="$2"
+fasta="$3"
 
-sed 's/$/ 3.33/' ../input/input.pdb > ../output/scored.pdb
+sed 's/$/ 3.33/' "$1" > IDRBind.pdb
 
-> ../output/result.csv
-cat ../input/chain.txt >> ../output/result.csv;
-cat ../input/chain.txt >> ../output/result.csv;
-cat ../input/chain.txt >> ../output/result.csv;
-sed -i 's/$/,3.33/' ../output/result.csv
+echo "$2" > core_rim_and_graph.csv
+cat "$3" >> core_rim_and_graph.csv
 
-sleep 2
+sleep 5

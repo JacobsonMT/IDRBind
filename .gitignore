@@ -25,4 +25,4 @@
 /.nb-gradle/
 
 /application.properties
-
+/test_commands/jobs/*/

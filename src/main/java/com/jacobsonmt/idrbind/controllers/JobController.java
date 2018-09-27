@@ -34,7 +34,8 @@ public class JobController {
 
     @PostMapping("/")
     public String handleFileUpload(@RequestParam("pdbFile") MultipartFile pdbFile,
-                                   @RequestParam("sequence") MultipartFile sequence,
+                                   @RequestParam("fastaFile") MultipartFile fastaFile,
+                                   @RequestParam("proteinChainIds") String proteinChainIds,
                                    @RequestParam("label") String label,
                                    @RequestParam(value = "email", required = false, defaultValue = "") String email,
                                    @RequestParam(value = "hidden", required = false, defaultValue = "false") boolean hidden,
@@ -49,7 +50,8 @@ public class JobController {
         IDRBindJob job = jobManager.createJob( ipAddress,
                 label,
                 IDRBindJob.inputStreamToString( pdbFile.getInputStream() ),
-                IDRBindJob.inputStreamToString( sequence.getInputStream() ),
+                IDRBindJob.inputStreamToString( fastaFile.getInputStream() ),
+                proteinChainIds,
                 email,
                 hidden );
         jobManager.submit( job );

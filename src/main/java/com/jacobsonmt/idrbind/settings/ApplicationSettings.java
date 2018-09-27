@@ -12,11 +12,10 @@ import org.springframework.stereotype.Component;
 public class ApplicationSettings {
 
     private String command;
-    private String commandWorkingDirectory;
-    private String inputPDBPath;
-    private String inputChainPath;
-    private String outputScoredPDBPath;
-    private String outputCSVPath;
+    private String jobsDirectory;
+    private String outputScoredPDBFilename;
+    private String outputCSVFilename;
+
     private int concurrentJobs = 1;
     private int userProcessLimit = 2;
     private int userJobLimit = 200;

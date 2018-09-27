@@ -52,7 +52,8 @@ public class JobEndpoint {
     @RequestMapping(value = "/submitJob", method = RequestMethod.GET, produces = {MediaType.TEXT_PLAIN_VALUE})
     public String submitJob(@RequestParam(value = "label") String label,
                                 @RequestParam(value = "pdbContent") String pdbContent,
-                                @RequestParam(value = "proteinChain") String proteinChain,
+                                @RequestParam(value = "fastaContent") String fastaContent,
+                                @RequestParam(value = "proteinChainIds") String proteinChainIds,
                                 @RequestParam(value = "email", required = false, defaultValue = "") String email,
                                 @RequestParam(value = "hidden", required = false, defaultValue = "false") boolean hidden,
                                 HttpServletRequest request
@@ -62,7 +63,7 @@ public class JobEndpoint {
             ipAddress = request.getRemoteAddr();
         }
 
-        IDRBindJob job = jobManager.createJob( label, label, pdbContent, proteinChain, email, hidden );
+        IDRBindJob job = jobManager.createJob( label, label, pdbContent, fastaContent, proteinChainIds, email, hidden );
         jobManager.submit( job );
         log.info( "Job Submitted: " + job.getJobId() );
         return "Job Submitted: " + job.getJobId();
