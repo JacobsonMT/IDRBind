@@ -46,7 +46,7 @@ public class JobManager {
 
     @PostConstruct
     private void initialize() {
-        executor = Executors.newSingleThreadExecutor();
+        executor = Executors.newFixedThreadPool( applicationSettings.getConcurrentJobs() );
         if ( applicationSettings.isPurgeSavedJobs() ) {
             scheduler = Executors.newSingleThreadScheduledExecutor();
             // Checks every hour for old jobs
