@@ -5,7 +5,9 @@ import com.jacobsonmt.idrbind.model.IDRBindJobResult;
 import com.jacobsonmt.idrbind.model.PurgeOldJobs;
 import com.jacobsonmt.idrbind.settings.ApplicationSettings;
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -91,17 +93,7 @@ public class JobManager {
         jobBuilder.hidden( hidden );
         jobBuilder.email( email );
 
-        IDRBindJob job = jobBuilder.build();
-
-        boolean validation = validateJob( job );
-
-        if ( !validation ) {
-            job.setComplete( true );
-            job.setFailed( true );
-            job.setStatus( "Failed" );
-        }
-
-        return job;
+        return jobBuilder.build();
 
     }
 
@@ -176,7 +168,6 @@ public class JobManager {
                     job.setStatus( "Processing" );
                     idx++;
                 } else if ( job.isComplete() ) {
-                    job.setStatus( "Completed in " + job.getExecutionTime() + "s" );
                     job.setPosition( null );
                     iterator.remove();
                 } else {
@@ -188,8 +179,26 @@ public class JobManager {
         }
     }
 
-    public void submit( IDRBindJob job ) {
+    public String submit( IDRBindJob job ) {
+
+        boolean validation = validateJob( job );
+
+        if ( !validation ) {
+            job.setComplete( true );
+            job.setFailed( true );
+            job.setStatus( "Validation Failed" );
+            return "Validation Failed.";
+        }
+
         submitToUserQueue( job );
+        if ( applicationSettings.isEmailOnJobSubmitted() && job.getEmail() != null && !job.getEmail().isEmpty() ) {
+            try {
+                emailService.sendJobSubmittedMessage( job );
+            } catch ( MessagingException | MailSendException e ) {
+                log.warn( e );
+            }
+        }
+        return "";
     }
 
     public IDRBindJob getSavedJob( String jobId ) {
@@ -210,15 +219,17 @@ public class JobManager {
     }
 
     private boolean validateJob( IDRBindJob job ) {
-        return true;
+        return Strings.isNotBlank( job.getInputPDBContent() ) &&
+                Strings.isNotBlank( job.getInputFASTAContent() ) &&
+                Strings.isNotBlank( job.getInputProteinChainIds() );
     }
 
     public void onJobStart( IDRBindJob job ) {
         if ( applicationSettings.isEmailOnJobStart() && job.getEmail() != null && !job.getEmail().isEmpty() ) {
             try {
                 emailService.sendJobStartMessage( job );
-            } catch ( MessagingException e ) {
-                log.error( e );
+            } catch ( MessagingException | MailSendException e ) {
+                log.warn( e );
             }
         }
     }
@@ -229,8 +240,8 @@ public class JobManager {
         if ( job.getEmail() != null && !job.getEmail().isEmpty() ) {
             try {
                 emailService.sendJobCompletionMessage( job );
-            } catch ( MessagingException e ) {
-                log.error( e );
+            } catch ( MessagingException | MailSendException e ) {
+                log.warn( e );
             }
         }
         // Add new job for given session

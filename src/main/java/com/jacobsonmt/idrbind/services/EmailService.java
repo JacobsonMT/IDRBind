@@ -3,7 +3,6 @@ package com.jacobsonmt.idrbind.services;
 import com.jacobsonmt.idrbind.model.IDRBindJob;
 import com.jacobsonmt.idrbind.settings.SiteSettings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -57,30 +56,31 @@ public class EmailService {
         sendMessage( "IDR Bind Help - Contact Support", content, siteSettings.getAdminEmail(), attachment );
     }
 
+    public void sendJobSubmittedMessage( IDRBindJob job ) throws MessagingException {
+        if ( job.getEmail() == null || job.getEmail().isEmpty() ) {
+            return;
+        }
+        sendMessage( "IDB Bind - Job Submitted", jobToEmail("Job Submitted", job), job.getEmail() );
+    }
+
     public void sendJobStartMessage( IDRBindJob job ) throws MessagingException {
         if ( job.getEmail() == null || job.getEmail().isEmpty() ) {
             return;
         }
-        StringBuilder content = new StringBuilder();
-        content.append( "<p>Job Submitted</p>" );
-        content.append( "<p>Label: " + job.getLabel() + "</p>" );
-        content.append( "<p>Submitted: " + job.getSubmittedDate() + "</p>" );
-        content.append( "<p>Status: " + job.getStatus() + "</p>" );
-        if ( job.isSaved() ) {
-            content.append( "<p>Saved Link: " + "<a href='" + siteSettings.getFullUrl()
-                    + "job/" + job.getJobId() + "' target='_blank'>"
-                    + siteSettings.getFullUrl() + "job/" + job.getJobId() + "'</a></p>" );
-        }
+        sendMessage( "IDB Bind - Job Started", jobToEmail("Job Started", job), job.getEmail() );
 
-        sendMessage( "IDB Bind - Job Submitted", content.toString(), job.getEmail() );
     }
 
     public void sendJobCompletionMessage( IDRBindJob job ) throws MessagingException {
         if ( job.getEmail() == null || job.getEmail().isEmpty() ) {
             return;
         }
+        sendMessage( "IDB Bind - Job Complete", jobToEmail("Job Complete", job), job.getEmail() );
+    }
+
+    private String jobToEmail(String header, IDRBindJob job) {
         StringBuilder content = new StringBuilder();
-        content.append( "<p>Job Complete</p>" );
+        content.append( "<p>" + header + "</p>" );
         content.append( "<p>Label: " + job.getLabel() + "</p>" );
         content.append( "<p>Submitted: " + job.getSubmittedDate() + "</p>" );
         content.append( "<p>Status: " + job.getStatus() + "</p>" );
@@ -89,8 +89,7 @@ public class EmailService {
                     + "job/" + job.getJobId() + "' target='_blank'>"
                     + siteSettings.getFullUrl() + "job/" + job.getJobId() + "'</a></p>" );
         }
-
-        sendMessage( "IDB Bind - Job Complete", content.toString(), job.getEmail() );
+        return content.toString();
     }
 
 }

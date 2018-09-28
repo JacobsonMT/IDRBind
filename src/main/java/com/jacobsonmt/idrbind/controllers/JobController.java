@@ -54,10 +54,11 @@ public class JobController {
                 proteinChainIds,
                 email,
                 hidden );
-        jobManager.submit( job );
+        String msg = jobManager.submit( job );
+        msg = msg.isEmpty() ? "Submitted" : msg;
 
-        redirectAttributes.addFlashAttribute("message",
-                "Job Submitted! View job <a href='job/" + job.getJobId() + "' target='_blank'>here</a>.");
+        redirectAttributes.addFlashAttribute( "message",
+                "Job " + msg + "! View job <a href='job/" + job.getJobId() + "' target='_blank'>here</a>." );
 
         return "redirect:/";
     }

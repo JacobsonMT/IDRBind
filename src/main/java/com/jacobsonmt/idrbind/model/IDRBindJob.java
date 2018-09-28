@@ -61,6 +61,9 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
     @Override
     public IDRBindJobResult call() throws Exception {
 
+        String resultPDB;
+        String resultCSV;
+
         try {
 
             log.info( "Starting job (" + label + ") for user: (" + userId + ")" );
@@ -93,26 +96,27 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
             this.executionTime = sw.getTotalTimeMillis() / 1000;
 
             // Get output
-            String resultPDB = inputStreamToString( Files.newInputStream( jobsDirectory.resolve( outputScoredPDBFilename ) ) );
-            String resultCSV = inputStreamToString( Files.newInputStream( jobsDirectory.resolve( outputCSVFilename ) ) );
+            resultPDB = inputStreamToString( Files.newInputStream( jobsDirectory.resolve( outputScoredPDBFilename ) ) );
+            resultCSV = inputStreamToString( Files.newInputStream( jobsDirectory.resolve( outputCSVFilename ) ) );
 
+            this.status = "Completed in " + executionTime + "s";
             log.info( "Finished job (" + label + ") for user: (" + userId + ")" );
             this.running = false;
             this.complete = true;
 
-            jobManager.onJobComplete( this );
-            jobManager = null;
-
-            return new IDRBindJobResult( resultPDB, resultCSV );
         } catch ( Exception e ) {
             log.error( e );
             this.complete = true;
             this.running = false;
             this.failed = true;
-            jobManager = null;
-            this.status = "Failed";
-            return new IDRBindJobResult( "", "" );
+            this.status = "Failed after " + executionTime + "s";
+            resultPDB = "";
+            resultCSV = "";
         }
+
+        jobManager.onJobComplete( this );
+        jobManager = null;
+        return new IDRBindJobResult( resultPDB, resultCSV );
 
     }
 
@@ -173,7 +177,7 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
             try {
                 result = this.getFuture().get( 1, TimeUnit.SECONDS );
             } catch ( InterruptedException | ExecutionException | TimeoutException e ) {
-                log.error( e );
+                log.debug( e );
             }
         }
 

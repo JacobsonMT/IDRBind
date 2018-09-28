@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Log4j2
 @RequestMapping("/api")
 @RestController
@@ -47,26 +45,6 @@ public class JobEndpoint {
 
         log.info( "Job Not Found" );
         return "Job Not Found";
-    }
-
-    @RequestMapping(value = "/submitJob", method = RequestMethod.GET, produces = {MediaType.TEXT_PLAIN_VALUE})
-    public String submitJob(@RequestParam(value = "label") String label,
-                                @RequestParam(value = "pdbContent") String pdbContent,
-                                @RequestParam(value = "fastaContent") String fastaContent,
-                                @RequestParam(value = "proteinChainIds") String proteinChainIds,
-                                @RequestParam(value = "email", required = false, defaultValue = "") String email,
-                                @RequestParam(value = "hidden", required = false, defaultValue = "false") boolean hidden,
-                                HttpServletRequest request
-                                ) {
-        String ipAddress = request.getHeader( "X-FORWARDED-FOR" );
-        if ( ipAddress == null ) {
-            ipAddress = request.getRemoteAddr();
-        }
-
-        IDRBindJob job = jobManager.createJob( label, label, pdbContent, fastaContent, proteinChainIds, email, hidden );
-        jobManager.submit( job );
-        log.info( "Job Submitted: " + job.getJobId() );
-        return "Job Submitted: " + job.getJobId();
     }
 
     private IDRBindJob.IDRBindJobVO createJobValueObject( IDRBindJob job) {
