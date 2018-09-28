@@ -168,7 +168,7 @@ public class JobManager {
             job.setComplete( true );
             job.setFailed( true );
             job.setStatus( "Validation Failed" );
-            return "Validation Failed.";
+            return "Validation Failed";
         }
 
         submitToUserQueue( job );

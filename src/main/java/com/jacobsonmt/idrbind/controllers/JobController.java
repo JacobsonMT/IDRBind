@@ -33,7 +33,7 @@ public class JobController {
 
 
     @PostMapping("/")
-    public String handleFileUpload(@RequestParam("pdbFile") MultipartFile pdbFile,
+    public String submitJob(@RequestParam("pdbFile") MultipartFile pdbFile,
                                    @RequestParam("fastaFile") MultipartFile fastaFile,
                                    @RequestParam("proteinChainIds") String proteinChainIds,
                                    @RequestParam("label") String label,
@@ -55,10 +55,15 @@ public class JobController {
                 email,
                 hidden );
         String msg = jobManager.submit( job );
-        msg = msg.isEmpty() ? "Submitted" : msg;
 
-        redirectAttributes.addFlashAttribute( "message",
-                "Job " + msg + "! View job <a href='job/" + job.getJobId() + "' target='_blank'>here</a>." );
+        if (msg.isEmpty()) {
+            redirectAttributes.addFlashAttribute( "message",
+                    "Job Submitted! View job <a href='job/" + job.getJobId() + "' target='_blank'>here</a>." );
+            redirectAttributes.addFlashAttribute( "warning", false );
+        } else {
+            redirectAttributes.addFlashAttribute( "message", msg );
+            redirectAttributes.addFlashAttribute( "warning", true );
+        }
 
         return "redirect:/";
     }

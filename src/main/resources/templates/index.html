@@ -33,24 +33,42 @@
 
         <hr/>
 
-        <div th:if="${message}" class="p-4">
-            <h2 th:utext="${message}"/>
-        </div>
-
-        <div class="p-4">
+        <div class="p-4" style="max-width: 600px;">
             <form method="POST" enctype="multipart/form-data" action="/">
-                <table>
-                    <tr><td>PDB file:</td><td><input type="file" name="pdbFile" required/></td></tr>
-                    <tr><td>FASTA file:</td><td><input type="file" name="fastaFile" required/></td></tr>
-                    <tr><td>PDB Chain ID(s):</td><td><input type="text" name="proteinChainIds" required/></td></tr>
-                    <tr><td>Job Name:</td><td><input type="text" name="label" required/></td></tr>
-                    <tr><td>Private:</td><td><input type="checkbox" name="hidden"/></td></tr>
-                    <tr><td>Email (Optional):</td><td><input type="email" name="email" /></td></tr>
-
-                    <tr><td></td><td><input type="submit" value="Submit Job" /></td></tr>
-                </table>
+                <div class="form-group">
+                    <label for="pdbFile">PDB file</label>
+                    <input type="file" class="form-control-file" id="pdbFile" name="pdbFile" required>
+                </div>
+                <div class="form-group">
+                    <label for="fastaFile">FASTA file</label>
+                    <input type="file" class="form-control-file" id="fastaFile" name="fastaFile" required>
+                </div>
+                <div class="form-group">
+                    <label for="proteinChainIds">PDB Chain ID(s)</label>
+                    <input type="text" class="form-control" id="proteinChainIds" name="proteinChainIds" placeholder="ABC" required>
+                </div>
+                <div class="form-group">
+                    <label for="label">Job Name</label>
+                    <input type="text" class="form-control" id="label" name="label" placeholder="Example" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">(Optional) Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">Only used to notify you when your jobs finishes and we'll never share your email with anyone else.</small>
+                </div>
+                <div class="form-check mb-2">
+                    <input type="checkbox" class="form-check-input" id="hidden" name="hidden">
+                    <label class="form-check-label" for="hidden">Keep this job private</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
+
+            <div th:if="${message}" class="mt-4 alert" th:classappend="${warning} ? alert-danger : alert-success" role="alert">
+                <span th:utext="${message}" th:remove="tag"/>
+            </div>
         </div>
+
+
 
         <hr/>
 
