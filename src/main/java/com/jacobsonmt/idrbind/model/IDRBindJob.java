@@ -70,6 +70,7 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
 
             this.running = true;
             this.status = "Processing";
+            this.position = 0;
 
             jobManager.onJobStart( this );
 

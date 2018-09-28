@@ -35,13 +35,13 @@ public class JobManager {
     // Contains a copy of the processing queue of jobs internal to executor.
     // It is non-trivial to extract a list of running/waiting jobs in the executor
     // so we maintain a copy in sync with the real thing.
-    private List<IDRBindJob> jobQueueMirror = new LinkedList<>();
+    private final Set<IDRBindJob> jobQueueMirror = new LinkedHashSet<>();
 
     // Secondary user queues or waiting lines. One specific to each user/session.
     private Map<String, Queue<IDRBindJob>> userQueues = new ConcurrentHashMap<>();
 
     // Contains map of token to saved job for future viewing
-    private Map<String, IDRBindJob> savedJobs = new ConcurrentHashMap<>();
+    private final Map<String, IDRBindJob> savedJobs = new ConcurrentHashMap<>();
 
     // Used to periodically purge the old saved jobs
     private ScheduledExecutorService scheduler;
@@ -101,11 +101,14 @@ public class JobManager {
         synchronized ( jobQueueMirror ) {
             log.info( "Submitting job (" + job.getJobId() + ") for user: (" + job.getUserId() + ") to process queue" );
             job.setJobManager( this );
+
+            jobQueueMirror.add( job );
+            job.setPosition( (int) jobQueueMirror.stream().filter( j -> !j.isRunning() ).count() );
+            job.setStatus( "Position: " + Integer.toString( job.getPosition() ) );
+
             Future<IDRBindJobResult> future = executor.submit( job );
             job.setFuture( future );
-            jobQueueMirror.add( job );
-            job.setStatus( "Position: " + Integer.toString( jobQueueMirror.size() ) );
-            job.setPosition( jobQueueMirror.size() );
+
         }
     }
 
@@ -157,28 +160,6 @@ public class JobManager {
 
     }
 
-    private void updatePositions( String userId ) {
-        synchronized ( jobQueueMirror ) {
-            int idx = 1;
-
-            for ( Iterator<IDRBindJob> iterator = jobQueueMirror.iterator(); iterator.hasNext(); ) {
-                IDRBindJob job = iterator.next();
-
-                if ( job.isRunning() ) {
-                    job.setStatus( "Processing" );
-                    idx++;
-                } else if ( job.isComplete() ) {
-                    job.setPosition( null );
-                    iterator.remove();
-                } else {
-                    job.setStatus( "Position: " + Integer.toString( idx ) );
-                    job.setPosition( idx );
-                    idx++;
-                }
-            }
-        }
-    }
-
     public String submit( IDRBindJob job ) {
 
         boolean validation = validateJob( job );
@@ -210,11 +191,10 @@ public class JobManager {
         return job;
     }
 
-    private String saveJob( IDRBindJob job ) {
+    private void saveJob( IDRBindJob job ) {
         synchronized ( savedJobs ) {
             job.setSaved( true );
             savedJobs.put( job.getJobId(), job );
-            return job.getJobId();
         }
     }
 
@@ -232,11 +212,22 @@ public class JobManager {
                 log.warn( e );
             }
         }
+
+        // Update positions
+        synchronized ( jobQueueMirror ) {
+            int idx = 1;
+            for ( IDRBindJob idrBindJob : jobQueueMirror ) {
+                if ( !idrBindJob.isRunning() ) {
+                    idrBindJob.setPosition( idx );
+                    idrBindJob.setStatus( "Position: " + Integer.toString( idx ) );
+                    idx++;
+                }
+            }
+        }
     }
 
     public void onJobComplete( IDRBindJob job ) {
         job.setSaveExpiredDate( System.currentTimeMillis() + applicationSettings.getPurgeAfterHours() * 60 * 60 * 1000 );
-        updatePositions( job.getUserId() );
         if ( job.getEmail() != null && !job.getEmail().isEmpty() ) {
             try {
                 emailService.sendJobCompletionMessage( job );
@@ -244,7 +235,13 @@ public class JobManager {
                 log.warn( e );
             }
         }
-        // Add new job for given session
+        // Remove job from queue mirror
+        job.setPosition( null );
+        synchronized ( jobQueueMirror ) {
+            jobQueueMirror.remove( job );
+        }
+
+        // Add new job for given user
         submitJobFromUserQueue( job.getUserId() );
         log.info( String.format( "Jobs in queue: %d", jobQueueMirror.size() ) );
     }
