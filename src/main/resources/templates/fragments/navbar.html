@@ -2,11 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="https://www.ubc.ca/">
-        <img th:src="@{/img/UBC-logo-signature-blue.gif}" style="height: 40px;" class="pr-2">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-between">
+    <a class="navbar-brand" th:href="@{/}" href="/">
+        <img th:src="@{/img/idrbind-logo.png}" style="height: 40px;" class="pr-2">
     </a>
     <a class="navbar-brand" th:href="@{/}" href="/">
+        <!--<div class="brand">-->
+        <!--<img th:src="@{/img/idrbind-logo.png}" style="height: 40px;" class="pr-2">-->
+        <!--</div>-->
         <div class="brand">
             <h1 class="text-uppercase font-weight-bold m-0">IDR Bind</h1>
             <p  class="text-uppercase">Gsponer Lab</p>
@@ -34,7 +37,11 @@
                 <a class="nav-link" th:href="@{/contact}" href="/contact">Contact</a>
             </li>
         </ul>
+        <a class="navbar-brand" href="https://www.ubc.ca/">
+            <img th:src="@{/img/UBC-logo-signature-blue.gif}" style="height: 40px;" class="pr-2">
+        </a>
     </div>
+
 </nav>
 </body>
 </html>
