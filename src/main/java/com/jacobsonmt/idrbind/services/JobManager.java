@@ -253,7 +253,7 @@ public class JobManager {
                 .map( j -> j.toValueObject( true ) )
                 .sorted(
                         Comparator.comparing(IDRBindJob.IDRBindJobVO::getPosition, Comparator.nullsLast(Integer::compareTo))
-                                .thenComparing(IDRBindJob.IDRBindJobVO::getSubmitted, Comparator.nullsLast(Date::compareTo).reversed())
+                                .thenComparing(IDRBindJob.IDRBindJobVO::getSubmittedDate, Comparator.nullsLast(Date::compareTo).reversed())
                                 .thenComparing(IDRBindJob.IDRBindJobVO::getStatus, String::compareToIgnoreCase)
                 )
                 .collect( Collectors.toList() );

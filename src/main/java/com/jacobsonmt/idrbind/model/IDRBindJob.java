@@ -37,6 +37,8 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
     private String inputProteinChainIds;
     @Builder.Default private boolean hidden = true;
     private Date submittedDate;
+    private Date startedDate;
+    private Date finishedDate;
     private String email;
 
     // Information on running / completion
@@ -71,6 +73,7 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
             this.running = true;
             this.status = "Processing";
             this.position = 0;
+            this.startedDate =  new Date();
 
             jobManager.onJobStart( this );
 
@@ -115,6 +118,7 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
             resultCSV = "";
         }
 
+        this.finishedDate =  new Date();
         jobManager.onJobComplete( this );
         jobManager = null;
         return new IDRBindJobResult( resultPDB, resultCSV );
@@ -164,10 +168,13 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
         private final boolean running;
         private final boolean failed;
         private final boolean complete;
-        private Integer position;
+        private final Integer position;
         private final String email;
         private final boolean hidden;
-        private final Date submitted;
+        private final Date submittedDate;
+        private final Date startedDate;
+        private final Date finishedDate;
+        private final String inputProteinChainIds;
         private final IDRBindJobResult result;
     }
 
@@ -182,7 +189,9 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
             }
         }
 
-        return new IDRBindJobVO( jobId, label, status, running, failed, complete, position, obfuscateEmail ? email.replaceAll("(\\w{0,3})(\\w+.*)(@.*)", "$1****$3") :  email, hidden, submittedDate, result );
+        return new IDRBindJobVO( jobId, label, status, running, failed, complete, position,
+                obfuscateEmail ? email.replaceAll("(\\w{0,3})(\\w+.*)(@.*)", "$1****$3") :  email,
+                hidden, submittedDate, startedDate, finishedDate, inputProteinChainIds, result );
     }
 
 }

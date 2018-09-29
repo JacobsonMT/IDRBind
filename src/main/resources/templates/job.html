@@ -9,54 +9,76 @@
 <div th:replace="fragments/navbar">...</div>
 <div class="container p-4">
 
-    <div th:replace="fragments/title :: title(title='Job Description')" th:remove="tag">...</div>
-
     <div class="main-content p-4" >
-        <table class="job-table table table-sm mb-0">
-            <tbody>
-            <tr>
-                <td>Job ID</td>
-                <td><span class="align-middle p-4" th:text="${job.jobId}"></span></td>
-            </tr>
-            <tr>
-                <td>Job Name</td>
-                <td><span class="align-middle p-4" th:text="${job.label}"></span></td>
-            </tr>
-            <tr>
-                <td>Status</td>
-                <td><span class="align-middle p-4" th:text="${job.status}"></span></td>
-            </tr>
-            <tr>
-                <td>Email</td>
-                <td><span class="align-middle p-4" th:text="${job.email}"></span></td>
-            </tr>
-            <tr>
-                <td>Private</td>
-                <td><span class="align-middle p-4" th:text="${job.hidden}"></span></td>
-            </tr>
-            <tr>
-                <td>Submitted</td>
-                <td><span class="align-middle p-4" th:text="${job.submitted}"></span></td>
-            </tr>
 
-            <tr th:if="${job.complete && !job.failed}">
-                <td>Result PDB</td>
-                <td><a class="align-middle p-4" th:href="${job.jobId}+'/resultPDB'">download</a></td>
-            </tr>
+    <h1 class="mb-0 text-center" th:text="${job.label}">...</h1>
+    <span class="d-block text-center mb-4 text-muted" th:text="${job.jobId}">...</span>
+    <small class="d-block text-center mb-4 text-muted" th:if="${job.hidden}" th:text="Private">...</small>
 
-            <tr th:if="${job.complete && !job.failed}">
-                <td>Result CSV</td>
-                <td><a class="align-middle p-4" th:href="${job.jobId}+'/resultCSV'">download</a></td>
-            </tr>
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="4">
+    <div class="card mx-auto text-center mb-4" style="max-width:600px;">
+        <div class="card-header">
+            Status
+        </div>
+        <div class="card-body">
+            <span th:text="${job.status}" th:remove="tag"></span>
+        </div>
+    </div>
 
-                </td>
-            </tr>
-            </tfoot>
-        </table>
+    <div class="card mx-auto text-center mb-4" style="max-width:600px;">
+        <div class="card-header">
+            Details
+        </div>
+            <table class="job-table table table-sm mb-0">
+                <tbody>
+                <tr>
+                    <td>Email</td>
+                    <td><span class="align-middle p-4" th:text="${job.email != null && job.email != ''} ? ${job.email} : 'None'"></span></td>
+                </tr>
+                <tr>
+                    <td>Submitted</td>
+                    <td><span class="align-middle p-4" th:text="${job.submittedDate != null} ? ${job.submittedDate} : 'Submission Pending'"></span></td>
+                </tr>
+                <tr>
+                    <td>Started</td>
+                    <td><span class="align-middle p-4" th:text="${job.startedDate != null} ? ${job.startedDate} : 'Not Started'"></span></td>
+                </tr>
+                <tr>
+                    <td>Finished</td>
+                    <td><span class="align-middle p-4" th:text="${job.finishedDate != null} ? ${job.finishedDate} : 'Not Finished'"></span></td>
+                </tr>
+                </tbody>
+            </table>
+    </div>
+
+        <div class="card mx-auto text-center mb-4" style="max-width:600px;">
+            <div class="card-header">
+                Inputs
+            </div>
+            <div class="card-body">
+                <span class="d-block align-middle mb-2" th:text="'Chain ID(s): ' + ${job.inputProteinChainIds}"></span>
+                <a class="align-middle m-4" th:href="${job.jobId}+'/inputPDB'">input.pdb</a>
+                <a class="align-middle m-4" th:href="${job.jobId}+'/inputFASTA'">input.fasta</a>
+            </div>
+        </div>
+
+        <div class="card mx-auto text-center mb-4" style="max-width:600px;">
+            <div class="card-header">
+                Results
+            </div>
+            <div class="card-body" th:if="${job.complete && !job.failed}">
+                <a class="align-middle m-4" th:href="${job.jobId}+'/resultPDB'" th:text="${@applicationSettings.getOutputScoredPDBFilename()}">result.pdb</a>
+                <a class="align-middle m-4" th:href="${job.jobId}+'/resultCSV'" th:text="${@applicationSettings.getOutputCSVFilename()}">result.csv</a>
+            </div>
+
+            <div class="card-body" th:if="${!job.complete}">
+                <p class="card-text">Not Finished</p>
+            </div>
+
+            <div class="card-body text-danger" th:if="${job.failed}">
+                <p class="card-text">Job Failed</p>
+            </div>
+        </div>
+
     </div>
 
 

@@ -127,5 +127,33 @@ public class JobController {
         return ResponseEntity.badRequest().body( "" );
     }
 
+    @GetMapping("/job/{jobId}/inputPDB")
+    public ResponseEntity<String> jobInputPDB( @PathVariable("jobId") String jobId) {
+        IDRBindJob job = jobManager.getSavedJob( jobId );
+
+        // test for not null and complete
+        if ( job != null ) {
+            return ResponseEntity.ok()
+                    .contentType( MediaType.parseMediaType("application/octet-stream"))
+                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + "-input.pdb\"")
+                    .body(job.getInputPDBContent());
+        }
+        return ResponseEntity.badRequest().body( "" );
+    }
+
+    @GetMapping("/job/{jobId}/inputFASTA")
+    public ResponseEntity<String> jobInputFASTA( @PathVariable("jobId") String jobId) {
+        IDRBindJob job = jobManager.getSavedJob( jobId );
+
+        // test for not null and complete
+        if ( job != null ) {
+            return ResponseEntity.ok()
+                    .contentType( MediaType.parseMediaType("application/octet-stream"))
+                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + "-input.fasta\"")
+                    .body(job.getInputFASTAContent());
+        }
+        return ResponseEntity.badRequest().body( "" );
+    }
+
 
 }
