@@ -13,7 +13,56 @@
     <div th:replace="fragments/title :: title(title='FAQ')" th:remove="tag">...</div>
 
     <div class="main-content p-4" >
-        FAQ
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            Can I submit large batch of proteins?
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>Please <a th:href="@{/contact}" href="/contact">contact us</a> to submit
+                            larger jobs.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            How do I interpret the results?
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>For the classification output of IDRBind: 0 = non-interface, 1 = core, 2 = rim, -99.88 =
+                            buried residues</p>
+                        <p>For CorePred and RimPred outputs range between 0 and 1. CorePred, for example, approximates
+                            the probability that the residue is a core residue if we ignored all the rim residues.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            How do I visualize the results?
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>The resulting PDB formatted output can be visualized in VMD by coloring the residues based
+                            on the B-factor field. It is best viewed with color range set between 0 to 2.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 

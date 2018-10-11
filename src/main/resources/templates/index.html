@@ -10,11 +10,12 @@
 <div class="container p-4">
 
 
-    <div th:replace="fragments/title :: title(title='Submit IDR Bind Job')" th:remove="tag">...</div>
+    <div th:replace="fragments/title :: title(title='Submit Job')" th:remove="tag">...</div>
 
     <div class="main-content p-4" >
 
-        <p>Welcome to IDR Bind. Please submit a job below.</p>
+        <p><b>IDRBind</b> is a protein interface predictor built specifically for binding sites of molecular recognition features
+            (MoRFs), which are interaction mediating elements in intrinsically disordered regions (IDRs).</p>
 
         <hr/>
 
@@ -22,19 +23,22 @@
             <form method="POST" enctype="multipart/form-data" action="/">
                 <div class="form-group">
                     <label for="pdbFile">PDB file</label>
-                    <input type="file" class="form-control-file" id="pdbFile" name="pdbFile" required>
+                    <input type="file" class="form-control-file" id="pdbFile" name="pdbFile" aria-describedby="pdbFileHelp" required>
+                    <small id="pdbFileHelp" class="form-text text-muted">Upload the protein(s) coordinates in standard PDB file format.</small>
                 </div>
                 <div class="form-group">
                     <label for="fastaFile">FASTA file</label>
-                    <input type="file" class="form-control-file" id="fastaFile" name="fastaFile" required>
+                    <input type="file" class="form-control-file" id="fastaFile" name="fastaFile" aria-describedby="fastaFileHelp" required>
+                    <small id="fastaFileHelp" class="form-text text-muted">Sequence file in the FASTA format labeled with matching chain ID.</small>
                 </div>
                 <div class="form-group">
                     <label for="proteinChainIds">PDB Chain ID(s)</label>
-                    <input type="text" class="form-control" id="proteinChainIds" name="proteinChainIds" placeholder="ABC" required>
+                    <input type="text" class="form-control" id="proteinChainIds" name="proteinChainIds" placeholder="AB" aria-describedby="proteinChainIdsHelp" required>
+                    <small id="proteinChainIdsHelp" class="form-text text-muted">Specify one or more protein chains matching those found in the PDB file (e.g. AB).</small>
                 </div>
                 <div class="form-group">
                     <label for="label">Job Name</label>
-                    <input type="text" class="form-control" id="label" name="label" placeholder="Example" required>
+                    <input type="text" class="form-control" id="label" name="label" placeholder="2LPB" required>
                 </div>
                 <div class="form-group">
                     <label for="email">(Optional) Email Address</label>

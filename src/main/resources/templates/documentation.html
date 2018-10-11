@@ -10,12 +10,45 @@
 <div class="container p-4">
 
 
-    <div th:replace="fragments/title :: title(title='Documentation')" th:remove="tag">...</div>
+    <div th:replace="fragments/title :: title(title='About')" th:remove="tag">...</div>
 
     <div class="main-content p-4" >
-        Documentation
+        <p><b>IDRBind</b> is a protein interface predictor built specifically for binding sites of molecular recognition
+            features (MoRFs), which are interaction mediating elements in intrinsically disordered regions (IDRs).</p>
+
+        <p>Protein-protein interactions have a fundamental role in most biological processes and many computational
+            methods have been created for the prediction of these interaction interfaces based on protein structure.
+            Most of these methods have been trained and tested on classical globular-globular protein interactions.
+            However, a large fraction of interactions is mediated by MoRFs, which play an especially prominent role
+            in signaling and regulation. IDRBind is a method built to predict MoRF-binding sites on structures of
+            folded proteins. It makes use of information from residue composition, residue evolutionary conservation,
+            residue relative accessible surface area (rASA), surface geometry, estimated B-factor and electrostatics.</p>
+
     </div>
 
+    <div th:replace="fragments/title :: title(title='Instructions')" th:remove="tag">...</div>
+
+    <div class="main-content p-4" >
+        <p><b>PDB file</b> - Upload the protein(s) coordinates in standard PDB file format. It is recommended to have properly terminated
+            chains. When multiple models of the protein are available, only the first model in the file is used.<p>
+        <p><b>PDB Chain ID(s)</b> - You must specify one or more protein chains matching those found in the PDB file (e.g. AB).</p>
+        <p><b>FASTA file</b> - We also require a sequence file in the FASTA format labeled with matching chain ID.</p>
+        <div class="card bg-light mb-3" style="max-width: 18rem;">
+            <div class="card-header">FASTA example</div>
+            <div class="card-body">
+                <p class="card-text mb-0">&gt;A</p>
+                <p class="card-text mb-0">SEQUENCE</p>
+                <p class="card-text mb-0">&gt;B</p>
+                <p class="card-text mb-0">SEQUENCE</p>
+            </div>
+        </div>
+        <p><b>Job Name</b> - Optional label for your job to identify it in the <a th:href="@{/queue}" href="/queue">public jobs queue</a> and its individual job page.</p>
+        <p><b>Email Address</b> - Optional email address your you to be notified at when your job has entered the
+            process queue, begun processing, and finished processing.</p>
+        <p><b>Keep this job private</b> - Optionally prevent this job from showing up in the <a th:href="@{/queue}" href="/queue">public jobs queue</a>.<p>
+        <p class="font-weight-bold">NOTE: If job is set to private, remember to save the URL of the job's page or to
+            supply an email so as to not to accidentally lose access to your job!</p>
+    </div>
 
 
 

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 @Service
 public class EmailService {
@@ -34,7 +35,7 @@ public class EmailService {
         helper.setSubject( subject );
         helper.setText( content, true );
         helper.setTo( to );
-        helper.setFrom( siteSettings.getAdminEmail() );
+        helper.setFrom( siteSettings.getFromEmail() );
 
         if ( attachment != null ) {
             helper.addAttachment( attachment.getOriginalFilename(), attachment );
@@ -46,14 +47,15 @@ public class EmailService {
 
     public void sendSupportMessage( String message, String name, String email, HttpServletRequest request,
                                     MultipartFile attachment ) throws MessagingException {
-        String content =
-                "Name: " + name + "\r\n" +
-                        "Email: " + email + "\r\n" +
-                        "User-Agent: " + request.getHeader( "User-Agent" ) + "\r\n" +
-                        "Message: " + message + "\r\n" +
-                        "File Attached: " + String.valueOf( attachment != null && !attachment.getOriginalFilename().equals( "" ) );
+        StringBuilder content = new StringBuilder();
+        content.append( "<p>Name: " + name + "</p>" );
+        content.append( "<p>Email: " + email + "</p>" );
+        content.append( "<p>User-Agent: " + request.getHeader( "User-Agent" ) + "</p>" );
+        content.append( "<p>Message: " + message + "</p>" );
+        boolean hasAttachment = (attachment != null && !Objects.equals( attachment.getOriginalFilename(), "" ));
+        content.append( "<p>File Attached: " + hasAttachment + "</p>" );
 
-        sendMessage( "IDR Bind Help - Contact Support", content, siteSettings.getAdminEmail(), attachment );
+        sendMessage( "IDR Bind Help - Contact Support", content.toString(), siteSettings.getContactEmail(), hasAttachment ? attachment : null );
     }
 
     public void sendJobSubmittedMessage( IDRBindJob job ) throws MessagingException {

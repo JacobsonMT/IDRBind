@@ -19,7 +19,7 @@ public class SiteSettings {
     @Email
     private String contactEmail;
     @Email
-    private String adminEmail;
+    private String fromEmail;
 
     public String getFullUrl() {
         return host + context + (context.endsWith( "/" ) ? "" : "/");
