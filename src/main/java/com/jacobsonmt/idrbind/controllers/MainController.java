@@ -79,4 +79,9 @@ public class MainController {
 
         return "contact";
     }
+
+    @GetMapping("/maintenance")
+    public String contact() {
+        return "maintenance";
+    }
 }
