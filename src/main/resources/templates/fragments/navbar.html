@@ -4,23 +4,14 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-between">
     <a class="navbar-brand" th:href="@{/}" href="/">
-        <img th:src="@{/img/idrbind-logo.png}" style="height: 40px;" class="pr-2">
-    </a>
-    <a class="navbar-brand" th:href="@{/}" href="/">
-        <!--<div class="brand">-->
-        <!--<img th:src="@{/img/idrbind-logo.png}" style="height: 40px;" class="pr-2">-->
-        <!--</div>-->
-        <div class="brand">
-            <h1 class="text-uppercase font-weight-bold m-0">IDR Bind</h1>
-            <p  class="text-uppercase">Gsponer Lab</p>
-        </div>
+        <img th:src="@{/img/idrbind-logo.png}" style="height: 60px;" class="pr-2">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav mr-auto" style="font-size:130%">
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/}" href="/">Home</a>
             </li>
@@ -37,8 +28,14 @@
                 <a class="nav-link" th:href="@{/contact}" href="/contact">Contact</a>
             </li>
         </ul>
+        <a class="navbar-brand" th:href="@{/}" href="/">
+            <div class="brand">
+                <h1 class="text-uppercase font-weight-bold m-0">IDR Bind</h1>
+                <p  class="text-uppercase">Gsponer Lab</p>
+            </div>
+        </a>
         <a class="navbar-brand" href="https://www.ubc.ca/">
-            <img th:src="@{/img/UBC-logo-signature-blue.gif}" style="height: 40px;" class="pr-2">
+            <img th:src="@{/img/UBC-logo-signature-blue.gif}" style="height: 60px;" class="pr-2">
         </a>
     </div>
 
