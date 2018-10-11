@@ -86,7 +86,7 @@ public class JobManager {
 
         // User Inputs
         jobBuilder.userId( userId );
-        jobBuilder.label( label );
+        jobBuilder.label( Strings.isNotBlank( label ) ? label : "unnamed" );
         jobBuilder.inputPDBContent( inputPDBContent );
         jobBuilder.inputFASTAContent( inputFASTAContent );
         jobBuilder.inputProteinChainIds( inputProteinChainIds );
