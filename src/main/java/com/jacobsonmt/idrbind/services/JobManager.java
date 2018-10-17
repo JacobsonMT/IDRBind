@@ -88,6 +88,7 @@ public class JobManager {
                                 job.setInputFASTAContent( inputStreamToString( Files.newInputStream( job.getJobsDirectory().resolve( job.getInputFASTAFilename() ) ) ) );
 
                                 job.setPosition( null );
+                                job.setEmail( "" );
 
                                 IDRBindJobResult result = new IDRBindJobResult(
                                         inputStreamToString( Files.newInputStream( job.getJobsDirectory().resolve( job.getOutputScoredPDBFilename() ) ) ),
