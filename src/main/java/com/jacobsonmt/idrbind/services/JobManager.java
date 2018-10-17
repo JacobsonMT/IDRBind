@@ -13,11 +13,17 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.jacobsonmt.idrbind.model.IDRBindJob.inputStreamToString;
 
 @Log4j2
 @Service
@@ -48,12 +54,67 @@ public class JobManager {
 
     @PostConstruct
     private void initialize() {
+        log.info( "Job Manager Initialize" );
         executor = Executors.newFixedThreadPool( applicationSettings.getConcurrentJobs() );
         if ( applicationSettings.isPurgeSavedJobs() ) {
             scheduler = Executors.newSingleThreadScheduledExecutor();
             // Checks every hour for old jobs
             scheduler.scheduleAtFixedRate( new PurgeOldJobs( savedJobs ), 0,
                     applicationSettings.getPurgeSavedJobsTimeHours(), TimeUnit.HOURS );
+        }
+
+        if ( applicationSettings.isLoadJobsFromDisk() ) {
+
+            // Populate completed jobs from jobs folder
+            Path jobsDirectory = Paths.get( applicationSettings.getJobsDirectory() );
+
+            PathMatcher matcher =
+                    FileSystems.getDefault().getPathMatcher( "glob:**/" + applicationSettings.getJobSerializationFilename() );
+
+            try {
+                Files.walkFileTree( jobsDirectory, new SimpleFileVisitor<Path>() {
+
+                    @Override
+                    public FileVisitResult visitFile( Path path,
+                                                      BasicFileAttributes attrs ) throws IOException {
+                        if ( matcher.matches( path ) ) {
+                            try ( ObjectInputStream ois = new ObjectInputStream( Files.newInputStream( path ) ) ) {
+                                IDRBindJob job = ( IDRBindJob ) ois.readObject();
+
+                                // Add back important transient fields
+                                job.setJobsDirectory( path.getParent() );
+
+                                job.setInputPDBContent( inputStreamToString( Files.newInputStream( job.getJobsDirectory().resolve( job.getInputPDBFilename() ) ) ) );
+                                job.setInputFASTAContent( inputStreamToString( Files.newInputStream( job.getJobsDirectory().resolve( job.getInputFASTAFilename() ) ) ) );
+
+                                job.setPosition( null );
+
+                                IDRBindJobResult result = new IDRBindJobResult(
+                                        inputStreamToString( Files.newInputStream( job.getJobsDirectory().resolve( job.getOutputScoredPDBFilename() ) ) ),
+                                        inputStreamToString( Files.newInputStream( job.getJobsDirectory().resolve( job.getOutputCSVFilename() ) ) )
+                                );
+                                job.setResult( result );
+
+                                job.setSaveExpiredDate( System.currentTimeMillis() + applicationSettings.getPurgeAfterHours() * 60 * 60 * 1000 );
+
+                                saveJob( job );
+                            } catch ( ClassNotFoundException e ) {
+                                log.error( e );
+                            }
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed( Path file, IOException exc )
+                            throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
+                } );
+            } catch ( IOException e ) {
+                log.error( e );
+            }
+
         }
 
     }
@@ -83,6 +144,9 @@ public class JobManager {
         jobBuilder.jobsDirectory( Paths.get( applicationSettings.getJobsDirectory(), jobId) );
         jobBuilder.outputScoredPDBFilename( applicationSettings.getOutputScoredPDBFilename() );
         jobBuilder.outputCSVFilename( applicationSettings.getOutputCSVFilename() );
+        jobBuilder.inputPDBFilename( applicationSettings.getInputPDBFilename() );
+        jobBuilder.inputFASTAFilename( applicationSettings.getInputFASTAFilename() );
+        jobBuilder.jobSerializationFilename( applicationSettings.getJobSerializationFilename() );
 
         // User Inputs
         jobBuilder.userId( userId );
@@ -106,8 +170,7 @@ public class JobManager {
             job.setPosition( (int) jobQueueMirror.stream().filter( j -> !j.isRunning() ).count() );
             job.setStatus( "Position: " + Integer.toString( job.getPosition() ) );
 
-            Future<IDRBindJobResult> future = executor.submit( job );
-            job.setFuture( future );
+            executor.submit( job );
 
         }
     }

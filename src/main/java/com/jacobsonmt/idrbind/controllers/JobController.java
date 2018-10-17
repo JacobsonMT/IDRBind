@@ -1,7 +1,6 @@
 package com.jacobsonmt.idrbind.controllers;
 
 import com.jacobsonmt.idrbind.model.IDRBindJob;
-import com.jacobsonmt.idrbind.model.IDRBindJobResult;
 import com.jacobsonmt.idrbind.services.JobManager;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @Log4j2
 @Controller
@@ -89,18 +85,10 @@ public class JobController {
 
         // test for not null and complete
         if ( job != null && job.isComplete() && !job.isFailed() ) {
-            try {
-                IDRBindJobResult result = job.getFuture().get( 1, TimeUnit.SECONDS );
-
-                    return ResponseEntity.ok()
-                            .contentType( MediaType.parseMediaType("application/octet-stream"))
-                            .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + "-result.pdb\"")
-                            .body(result.getResultPDB());
-
-            } catch ( InterruptedException | ExecutionException | TimeoutException e ) {
-                log.warn( e );
-                ResponseEntity.status( 500 ).body( "" );
-            }
+            return ResponseEntity.ok()
+                    .contentType( MediaType.parseMediaType("application/octet-stream"))
+                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + "-result.pdb\"")
+                    .body(job.getResult().getResultPDB());
         }
         return ResponseEntity.badRequest().body( "" );
     }
@@ -111,18 +99,10 @@ public class JobController {
 
         // test for not null and complete
         if ( job != null && job.isComplete() && !job.isFailed() ) {
-            try {
-                IDRBindJobResult result = job.getFuture().get( 1, TimeUnit.SECONDS );
-
-                return ResponseEntity.ok()
-                        .contentType( MediaType.parseMediaType("application/octet-stream"))
-                        .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + "-result.csv\"")
-                        .body(result.getResultCSV());
-
-            } catch ( InterruptedException | ExecutionException | TimeoutException e ) {
-                log.warn( e );
-                ResponseEntity.status( 500 ).body( "" );
-            }
+            return ResponseEntity.ok()
+                    .contentType( MediaType.parseMediaType("application/octet-stream"))
+                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + "-result.csv\"")
+                    .body(job.getResult().getResultCSV());
         }
         return ResponseEntity.badRequest().body( "" );
     }

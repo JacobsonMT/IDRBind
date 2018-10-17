@@ -15,6 +15,10 @@ public class ApplicationSettings {
     private String jobsDirectory;
     private String outputScoredPDBFilename;
     private String outputCSVFilename;
+    private String inputPDBFilename;
+    private String inputFASTAFilename;
+    private String jobSerializationFilename;
+    private boolean loadJobsFromDisk;
 
     private int concurrentJobs = 1;
     private int userProcessLimit = 2;
