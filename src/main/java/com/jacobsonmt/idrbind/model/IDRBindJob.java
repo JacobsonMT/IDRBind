@@ -86,7 +86,7 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
                 writer.write( inputPDBContent );
             }
 
-            Path fastaFile = jobsDirectory.resolve( "input.fasta" );
+            Path fastaFile = jobsDirectory.resolve( "pdb.fasta" );
             try ( BufferedWriter writer = Files.newBufferedWriter( fastaFile, Charset.forName( "UTF-8" ) ) ) {
                 writer.write( inputFASTAContent );
             }
@@ -94,7 +94,7 @@ public class IDRBindJob implements Callable<IDRBindJobResult> {
             // Execute script
             StopWatch sw = new StopWatch();
             sw.start();
-            String[] commands = {command, "input.pdb", inputProteinChainIds, "input.fasta"};
+            String[] commands = {command, "input.pdb", inputProteinChainIds, "pdb.fasta"};
             executeCommand( commands, jobsDirectory );
             sw.stop();
             this.executionTime = sw.getTotalTimeMillis() / 1000;
