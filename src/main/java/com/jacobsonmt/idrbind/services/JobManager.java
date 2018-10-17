@@ -234,7 +234,6 @@ public class JobManager {
             return "Validation Failed";
         }
 
-        submitToUserQueue( job );
         if ( applicationSettings.isEmailOnJobSubmitted() && job.getEmail() != null && !job.getEmail().isEmpty() ) {
             try {
                 emailService.sendJobSubmittedMessage( job );
@@ -242,6 +241,9 @@ public class JobManager {
                 log.warn( e );
             }
         }
+
+        submitToUserQueue( job );
+
         return "";
     }
 
