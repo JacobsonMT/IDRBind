@@ -40,10 +40,18 @@
                 </div>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                     <div class="card-body">
+                        <p>IDRBind provides three prediction scores/labels for each surface residue of the protein
+                            structure: CorePred, RimPred, and the IDRBind label from the conditional random field.
+                            The IDRBind label is generally the most accurate and easy to interpret, combining the
+                            results from CorePred and RimPred. However, CorePred and RimPred scores may provide additional
+                            information, predicting core and rim interface residues, respectively. For example, if the
+                            query protein has multiple putative interfaces, an interface may be overshadowed and
+                            suppressed in the IDRBind label but may still appear prominent in CorePred and RimPred scores.</p>
                         <p>For the classification output of IDRBind: 0 = non-interface, 1 = core, 2 = rim, -99.88 =
-                            buried residues</p>
+                            buried residues or unrecognized residues</p>
                         <p>For CorePred and RimPred outputs range between 0 and 1. CorePred, for example, approximates
-                            the probability that the residue is a core residue if we ignored all the rim residues.</p>
+                            the probability that the residue is a core residue if we ignored all the rim residues.
+                            CorePred and RimPred scores are only available in the csv file.</p>
                     </div>
                 </div>
             </div>
@@ -58,7 +66,41 @@
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                     <div class="card-body">
                         <p>The resulting PDB formatted output can be visualized in VMD by coloring the residues based
-                            on the B-factor field. It is best viewed with color range set between 0 to 2.</p>
+                            on the B-factor field. It is best viewed with the color range set between 0 to 2. One can also
+                            set the range from -0.5 to 2 to differentiate the non-interface residues from the buried
+                            residues.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Can I submit multiple chains in one model?
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>Yes. However, larger structures will take much longer to run. Structures that are too large may
+                            fail to run (i.e., greater 1000 residues; varies depending on the shape and geometry).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFive">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Why am I not getting results?
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>Please check that the FASTA file is formatted correctly. For structures large in size or surface
+                           area, it may take upwards of 2 hours. Splitting oligomers into individual chains would greatly
+                           reduce the processing time, but this will also change predicted interfaces. Please contact support
+                           for additional troubleshooting.</p>
                     </div>
                 </div>
             </div>

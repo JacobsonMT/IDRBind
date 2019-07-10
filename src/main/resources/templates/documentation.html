@@ -13,26 +13,37 @@
     <div th:replace="fragments/title :: title(title='About')" th:remove="tag">...</div>
 
     <div class="main-content p-4" >
-        <p><b>IDRBind</b> is a protein interface predictor built specifically for binding sites of molecular recognition
-            features (MoRFs), which are interaction mediating elements in intrinsically disordered regions (IDRs).</p>
+        <p><b>IDRBind</b> is a protein interface predictor for binding sites of intrinsically disordered protein regions
+           (IDRs), ranging from peptide motifs (i.e., short linear motifs) to molecular recognition features (MoRFs).
+           Differentiating IDRBind from other interface predictors is its emphasis on binding sites of MoRFs, which are
+           long interaction mediating elements within IDRs.</p>
 
-        <p>Protein-protein interactions have a fundamental role in most biological processes and many computational
-            methods have been created for the prediction of these interaction interfaces based on protein structure.
-            Most of these methods have been trained and tested on classical globular-globular protein interactions.
-            However, a large fraction of interactions is mediated by MoRFs, which play an especially prominent role
-            in signaling and regulation. IDRBind is a method built to predict MoRF-binding sites on structures of
-            folded proteins. It makes use of information from residue composition, residue evolutionary conservation,
-            residue relative accessible surface area (rASA), surface geometry, estimated B-factor and electrostatics.</p>
+        <p>Protein-protein interactions have a fundamental role in most biological processes, and many computational
+           methods have been created for the prediction of these interaction interfaces based on protein structure.
+           Most of these methods have been trained and tested on classical globular-globular protein interactions.
+           However, a large fraction of interactions are mediated by MoRFs, which play an especially prominent role
+           in signaling and regulation. IDRBind is a method built to predict MoRF-binding sites on structures of folded
+           proteins. It makes use of information from residue composition, residue evolutionary conservation, residue
+           relative accessible surface area (rASA), surface geometry, estimated B-factor and electrostatics. The
+           similarities in characteristics between binding sites of MoRFs and shorter peptides (e.g., SLiMs) make
+           IDRBind a suitable prediction method for both.</p>
+
+       <p>Please see <b>FAQ</b> for more usage information.</p>          
+          
+       <p><b>Reference for IDRBind:</b></p>
+       <p>E.T.C. Wong, J. Gsponer “Predicting protein-protein interfaces that bind intrinsically disordered protein regions” J. Mol. Biol. (2019). (Accepted)</p>
+
 
     </div>
 
     <div th:replace="fragments/title :: title(title='Instructions')" th:remove="tag">...</div>
 
     <div class="main-content p-4" >
-        <p><b>PDB file</b> - Upload the protein(s) coordinates in standard PDB file format. It is recommended to have properly terminated
-            chains. When multiple models of the protein are available, only the first model in the file is used.<p>
-        <p><b>PDB Chain ID(s)</b> - You must specify one or more protein chains matching those found in the PDB file (e.g. AB).</p>
-        <p><b>FASTA file</b> - We also require a sequence file in the FASTA format labeled with matching chain ID.</p>
+        <p><b>PDB file</b> - Upload the protein(s) coordinates in standard PDB file format. It is recommended to
+               have properly terminated chains. When multiple models of the protein are available, only the first
+               model in the file will be used.<p>
+        <p><b>PDB Chain ID(s)</b> - You must specify one or more protein chains matching those found in the PDB file (e.g., AB).</p>
+        <p><b>FASTA file</b> - We also require a sequence file in the FASTA format where each sequence is labeled with chain ID matching those in the PDB file.</p>
         <div class="card bg-light mb-3" style="max-width: 18rem;">
             <div class="card-header">FASTA example</div>
             <div class="card-body">
