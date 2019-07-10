@@ -15,7 +15,6 @@ import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
@@ -176,14 +175,14 @@ public class JobManager {
         }
     }
 
-    private void submitToUserQueue( IDRBindJob job ) {
+    private String submitToUserQueue( IDRBindJob job ) {
         log.info( "Submitting job (" + job.getJobId() + ") for user: (" + job.getUserId() + ") to user queue" );
 
         Queue<IDRBindJob> jobs = userQueues.computeIfAbsent( job.getUserId(), k -> new LinkedList<>() );
 
         if ( jobs.size() > applicationSettings.getUserJobLimit() ) {
             log.info( "Too many jobs (" + job.getJobId() + ") for user: (" + job.getUserId() + ")");
-            return;
+            return "Exceeded Allocated Job Limit";
         }
 
         synchronized ( jobs ) {
@@ -195,6 +194,8 @@ public class JobManager {
                 submitJobFromUserQueue( job.getUserId() );
             }
         }
+
+        return "";
     }
 
     private void submitJobFromUserQueue( String userId ) {
@@ -243,9 +244,8 @@ public class JobManager {
             }
         }
 
-        submitToUserQueue( job );
+        return submitToUserQueue( job );
 
-        return "";
     }
 
     public IDRBindJob getSavedJob( String jobId ) {
