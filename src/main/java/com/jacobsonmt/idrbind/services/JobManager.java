@@ -192,6 +192,15 @@ public class JobManager {
                 job.setStatus( "Pending" );
                 saveJob( job );
                 submitJobFromUserQueue( job.getUserId() );
+
+                if ( applicationSettings.isEmailOnJobSubmitted() && job.getEmail() != null && !job.getEmail().isEmpty() ) {
+                    try {
+                        emailService.sendJobSubmittedMessage( job );
+                    } catch ( MessagingException | MailSendException e ) {
+                        log.warn( e );
+                    }
+                }
+
             }
         }
 
@@ -234,14 +243,6 @@ public class JobManager {
             job.setFailed( true );
             job.setStatus( "Validation Failed" );
             return "Validation Failed";
-        }
-
-        if ( applicationSettings.isEmailOnJobSubmitted() && job.getEmail() != null && !job.getEmail().isEmpty() ) {
-            try {
-                emailService.sendJobSubmittedMessage( job );
-            } catch ( MessagingException | MailSendException e ) {
-                log.warn( e );
-            }
         }
 
         return submitToUserQueue( job );

@@ -82,15 +82,33 @@ public class EmailService {
 
     private String jobToEmail(String header, IDRBindJob job) {
         StringBuilder content = new StringBuilder();
-        content.append( "<p>" + header + "</p>" );
-        content.append( "<p>Label: " + job.getLabel() + "</p>" );
-        content.append( "<p>Submitted: " + job.getSubmittedDate() + "</p>" );
-        content.append( "<p>Status: " + job.getStatus() + "</p>" );
+        content.append( "<h2>" + header + "</h2>" );
+        content.append( "<table><tbody>" );
+        content.append( "<tr><th style='width: 150px; vertical-align: top;'><label>" +
+                "Label" +
+                "</label></th><td><span>" +
+                job.getLabel() +
+                "</span></td></tr>" );
+        content.append( "<tr><th style='width: 150px; vertical-align: top;'><label>" +
+                "Submitted" +
+                "</label></th><td><span>" +
+                (job.getSubmittedDate() == null ? "Pending" : job.getSubmittedDate()) +
+                "</span></td></tr>" );
+        content.append( "<tr><th style='width: 150px; vertical-align: top;'><label>" +
+                "Status" +
+                "</label></th><td><span>" +
+                job.getStatus() +
+                "</span></td></tr>" );
         if ( job.isSaved() ) {
-            content.append( "<p>Saved Link: " + "<a href='" + siteSettings.getFullUrl()
+            content.append( "<tr><th style='width: 150px; vertical-align: top;'><label>" +
+                    "Saved Link" +
+                    "</label></th><td><span>" +
+                    "<a href='" + siteSettings.getFullUrl()
                     + "job/" + job.getJobId() + "' target='_blank'>"
-                    + siteSettings.getFullUrl() + "job/" + job.getJobId() + "'</a></p>" );
+                    + siteSettings.getFullUrl() + "job/" + job.getJobId() + "</a>" +
+                    "</span></td></tr>" );
         }
+        content.append( "</tbody></table>" );
         return content.toString();
     }
 
