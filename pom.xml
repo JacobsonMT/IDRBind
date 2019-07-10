@@ -6,7 +6,7 @@
     <groupId>com.jacobsonmt.idrbind</groupId>
     <artifactId>idrbind</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>IDRbind</name>
     <description>IDRbind Server</description>
